@@ -3,6 +3,9 @@
   padding: 0;
   box-sizing: border-box;
 }
+#five-days{
+  /* display:none; */
+}
 .forecast-section {
   position: absolute;
   top: 8vh;

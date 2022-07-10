@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import('./index.css');
+
 
 const FiveDayForecast = (props) => {
   if (!Object.keys(props.daysList).length) return <></>;

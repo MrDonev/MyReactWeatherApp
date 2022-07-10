@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import FiveDayForecast from './FiveDayForecast';
 
 const api = {
@@ -18,23 +18,32 @@ function App() {
       'X-RapidAPI-Key': '2d30c3e73e49e18ea4a898ddee275115',
     },
   };
+  useEffect(()=>{
+    if(query!==''){
+      setFiveDayList({})
+    }
+  },[query])
   const search = (evt) => {
     if (evt.key === 'Enter') {
       fetch(`${api.base}weather?q=${query}&units=metric&APPID=${api.key}`)
         .then((res) => res.json())
         .then((result) => {
-          setWeather(result);
           setQuery('');
-          setBackgroundClass(`app ${result.weather[0].main}`);
-          console.log(result);
+          if (result.cod !== '404') {
+            setWeather(result);
+            setBackgroundClass(`app ${result.weather[0].main}`);
+          } else {
+            alert(`Invalid location!`);
+          }
         });
       fetch(
         `https://${options.headers['X-RapidAPI-Host']}/forecast?q=${query}&appid=${options.headers['X-RapidAPI-Key']}`
       )
         .then((response) => response.json())
         .then((response) => {
-          setFiveDayList(response.list);
-           console.log(response);
+          if (response.cod !== '404') {
+            setFiveDayList(response.list);
+          }
         })
         .catch((err) => console.error(err));
     }
@@ -103,19 +112,23 @@ function App() {
           ''
         )}
         <section>
-        <button
-          className="five-day-forecast"
-          type="button"
-          onClick={() => {
-            let toggleDisplay =
-              document.getElementById('DaysForecast').style.display === 'none'
-                ? 'flex'
-                : 'none';
-             document.getElementById('DaysForecast').style.display = toggleDisplay;
-          }}
-        >
-          Get 5 day forecast
-        </button>
+          <button
+            id="five-days"
+            className="five-day-forecast"
+            type="button"
+            onClick={() => {
+              let fiveDays = document.getElementById('DaysForecast');
+              if (fiveDays) {
+                let toggleDisplay =
+                document.getElementById('DaysForecast').style.display === 'none'
+                  ? 'flex'
+                  : 'none' || 'flex';
+                  fiveDays.style.display = toggleDisplay;
+              }
+            }}
+          >
+            Get 5 day forecast
+          </button>
           <FiveDayForecast daysList={fiveDayList} />
         </section>
       </main>
